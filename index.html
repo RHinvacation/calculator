@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="./js/vue.js"></script>
+    <link rel="stylesheet" href="./styles/style.css">
+    <title>计算器</title>
+</head>
+
+<body>
+    <div id="app">
+        <h3 align="center">计算器</h3>
+        <p>操作数1：</p>
+        <input type="text" v-model="num1">
+        <br>
+        <span v-if="isShow">
+            <p>操作数2：</p>
+            <input type="text" v-model="num2">
+        </span>
+        <br>
+        <p>运算符：</p>
+        <select v-model="selected">
+            <option disabled value="">请选择运算符</option>
+            <option value="+">+</option>
+            <option value="-">-</option>
+            <option value="*">*</option>
+            <option value="/">/</option>
+            <option value="**">**</option>
+        </select>
+        &nbsp;
+        <button @click="calculate">计算</button>
+        <br>
+        <div class="cal-result">计算结果：<span :class="{error_message: isNaN(result)}">{{result}}</span></div>
+    </div>
+    <script>
+        //定义根组件
+        const RootComp = {
+            //数据选项
+            data() {
+                return {
+                    num1: 0,
+                    num2: 0,
+                    selected: '',
+                    isShow: true,
+                    result: 0
+                }
+            },
+            methods: {
+                calculate() {
+                    if (this.selected === '') {
+                        alert("请选择运算符")
+                        return
+                    }
+
+                    // 检查操作数是否为有效数字
+                    if (isNaN(this.num1) || isNaN(this.num2)) {
+                        alert("请输入有效数字")
+                        this.result = NaN
+                        return
+                    }
+
+                    // 将操作数转换为浮点数
+                    const Num1 = parseFloat(this.num1)
+                    const Num2 = parseFloat(this.num2)
+
+                    // 根据选择的运算符执行相应的计算
+                    switch (this.selected) {
+                        case '+':
+                            this.result = Num1 + Num2
+                            break
+                        case '-':
+                            this.result = Num1 - Num2
+                            break
+                        case '*':
+                            this.result = Num1 * Num2
+                            break
+                        case '/':
+                            if (Num2 === 0) {
+                                alert("除数不能为0")
+                                this.result = NaN
+                            } else {
+                                this.result = Num1 / Num2
+                            }
+                            break
+                        case '**':
+                            this.result = Num1 * Num1
+                            break
+                    }
+                }
+
+            },
+            watch: {
+                selected(newValue, oldValue) {
+                    if (newValue == '**') {
+                        this.isShow = false
+                    } else {
+                        this.isShow = true
+                    }
+                }
+            }
+        }
+        // 创建vue应用的根组件
+        const vueApp = Vue.createApp(RootComp)
+        // 挂载处理
+        const vuemodle = vueApp.mount('#app')
+    </script>
+</body>
+
+</html>
